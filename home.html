@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <title>consulta</title>
+    <style>
+        #resultado {
+            padding: 10px;
+            margin-top: 10px;
+            max-width: 350px;
+            background-color: antiquewhite;
+            border: 1px solid gray;
+            border-radius: 10px;
+            box-shadow: 2px 2px gray;
+        }
+
+        #idade {
+            padding: 10px;
+            margin-top: 10px;
+            max-width: 350px;
+            background-color: antiquewhite;
+            border: 1px solid gray;
+            border-radius: 10px;
+            box-shadow: 2px 2px gray;
+        }
+
+        #dig {
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="body">
+        <h3>Consulta endereço</h3>
+        <label>Digite seu cep: </label>
+        <input type="number" id="cep" />
+        <button onclick="consultaEndereco()">Consultar</button>
+        <div id="resultado">
+            <p>Seu resultado</p>
+        </div>
+
+        <div id="dig">
+            <label>Digite sua data de nascimento: </label>
+            <input type="text" id="inputDate" />
+            <button onclick="consultaIdade()">Consultar</button>
+            <div id="idade">
+                <p>Idade: <span id="age"></span></p>
+            </div>
+        </div>
+
+</body>
+
+<script>
+    function consultaEndereco() {
+        let cep = document.querySelector('#cep').value;
+
+        if (cep.length !== 8) {
+            alert('CEP inválido!');
+            return
+        }
+
+        let url = 'https://viacep.com.br/ws/' + cep + '/json/';
+
+        fetch(url).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            console.log(data);
+            mostrarEndereco(data);
+        });
+        function mostrarEndereco(dados) {
+            let resultado = document.querySelector('#resultado');
+
+            resultado.innerHTML =
+                `<p>Endereço: ${dados.logradouro}</p>               
+                <p>Complemento: ${dados.complemento}</p>      
+                <p>Bairro: ${dados.bairro}</p>  
+                <p>Cidade: ${dados.localidade} - ${dados.uf}</p>`
+
+        }
+    }
+    function getAge(dateString) {
+        var today = new Date();
+        var birthDate = new Date(dateString);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+
+    }
+
+    function consultaIdade() {
+
+
+        let inputDateValue = document.querySelector('#inputDate').value;
+        let parseDate = inputDateValue.split('/').reverse().join('-');
+        let age = getAge(parseDate)
+        console.log(inputDateValue)
+        console.log(age)
+        document.querySelector('#age').textContent = age + " anos";
+    }
+</script>
+</div>
+
+</html>
